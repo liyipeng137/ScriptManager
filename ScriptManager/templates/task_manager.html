@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+{% import 'wtf.html' as wtf %}
+{% block content %}
+
+<body>
+    <h5 style="display:inline-block">Tasks List</h5>
+    <form style="display:inline-block;float:right" method="post" action="{{ url_for('flush_taskstate', next=url_for('task_manager')) }}">
+        <input type="hidden"/>
+        <button class="btn" type="submit"  onclick="return confirm('Are you sure?');">刷新</button>
+    </form>
+    <br></br>
+    <div class="flex-column">
+        {% for task in tasks %}
+            <div class="list-group-item list-group-item-action ">
+                <div class="d-flex w-100 justify-content-between">  
+                    <h5 >
+                        <details>
+                            <summary class="text-success ">{{ task.name }}</summary>
+                            <div class="summary-text">
+                                <br></br>
+                                <ul>创建时间: {{task.timestamp}}</ul>
+                                {% for script in scripts %}
+                                    {% if  script.id == task.script_id %}
+                                        <ul>运行脚本: {{script.name}} </ul>
+                                    {% endif %}
+                                {% endfor %}
+                                <ul>绑定节点: {{task_show(task.id).get_node_list()}} </ul>
+                                {% set start_node,stop_node,failed_node = task_show(task.id).get_task_state() %}
+                                <ul>状态: {{start_node |length}}/{{stop_node |length}}/{{failed_node |length}} (start/stop/failed)</ul>
+                            </div>
+                        </details>
+                    </h5>
+                    <button class="btt">{{task.run_type}}</button>
+                    <button class="btt">{{start_node |length}}/{{stop_node |length}}/{{failed_node |length}} </button>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle btn" data-toggle="dropdown" role="button">
+                            管理
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% if stop_node |length  == 0 and failed_node|length == 0 %}
+                            <form class="dropdown-item"   method="post" action="{{ url_for('stop_task', task_id=task.id, next=url_for('task_manager')) }}">
+                                <input type="hidden"/>
+                                <button type="submit" class="btn" onclick="return confirm('Are you sure?');">Stop</button>
+                            </form>
+                        {% elif failed_node|length != 0 %}
+                            <form class="dropdown-item"  method="post" action="{{ url_for('start_task', task_id=task.id, next=url_for('task_manager')) }}">
+                                <input type="hidden"/>
+                                <button type="submit" class="btn" onclick="return confirm('Are you sure?');">Restart</button>
+                            </form>
+                        {% else %}
+                            <form class="dropdown-item"   method="post" action="{{ url_for('start_task', task_id=task.id, next=url_for('task_manager')) }}">
+                                <input type="hidden"/>
+                                <button type="submit" class="btn" onclick="return confirm('Are you sure?');">Start</button>
+                            </form>
+                        {% endif %}
+                            <form class="dropdown-item"  method="post" action="{{ url_for('delete_task', task_id=task.id, next=url_for('task_manager')) }}">
+                                <input type="hidden"/>
+                                <button type="submit" class="btn" onclick="return confirm('Are you sure?');">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <p></p>
+    <button class="btn" onclick="show()">添加任务</button>
+        <div id ="button" style="display:none;" class="hello-form">
+            <form class="form" action="{{ url_for('task_manager') }}" method='post'>
+                {{wtf.form_field(form.taskname)}}
+                {{wtf.form_field(form.bindnode)}}
+                {{wtf.form_field(form.script)}}
+                {{ form.runtype.label }}
+                <select class="form-control" id="runtype" name="runtype" onchange="crontabinner()">
+                    <option value="Backup">Backup</option> 
+                    <option value="Crontab">Crontab</option>
+                </select>
+                <p></p>
+                <div id='crontabset' style="display:none;">
+                    {{wtf.form_field(form.crontabset)}}
+                </div>
+                {{ wtf.form_field(form.submit) }}
+        </form>
+        </div>
+</body>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block content %}
+<body>
+    <h5>Scripts List</h5>
+    <br></br>
+    <div class="list-group">
+        {% for file in files %}
+            <a class="list-group-item list-group-item-action flex-column">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1 text-success">{{ file }}
+                        <!--small class="text-muted"> #{{ loop.revindex }}</small-->
+                    </h5>
+                    <form class="inline" method="post" action="{{ url_for('delete_file', filename=file, next=url_for('script_manager')) }}">
+                        <input type="hidden"/>
+                        <button type="submit" class="btn" onclick="return confirm('Are you sure?');">Delete</button>
+                    </form>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    <br></br>
+    <button class="btn" onclick="show()">上传文件</button>
+    <div id ="button" style="display:none;"  class="hello-form">
+        <form action="" method="post" enctype="multipart/form-data">
+            <input class='btn' type="file" name="file">
+            <button class='btn' type="submit" >上传</button>
+        </form>
+    </div>
+
+</body>
+{% endblock %}

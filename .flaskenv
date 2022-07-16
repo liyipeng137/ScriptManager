@@ -1,0 +1,3 @@
+FLASK_APP=ScriptManager
+#FLASK_ENV=development
+FLASK_ENV=prod
