@@ -11,10 +11,11 @@ if install paramiko failed
 
 try
 
-    pip3 install --upgrade pip
+    pip3.6 install --upgrade pip
     
     yum -y install python36-devel
 
+    pip3.6 install paramiko
 
 Add your task(crontab or backup)
 ![03](https://user-images.githubusercontent.com/73690542/179364551-4c4affa0-0782-48a8-a0d8-cc5328c0a863.PNG)
