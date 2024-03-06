@@ -1,11 +1,7 @@
 # ScriptManager
-## From my flask study -- Script Manager Tool
+Script Manager Tool
 
-The start for Study Flask 
-
-first: `pip install -r requirements.txt`
-
-next: `flask run --host=0.0.0.0 --port=5000`
+`flask run --host=0.0.0.0 --port=5000`
 
 if install paramiko failed
 
